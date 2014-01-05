@@ -37,7 +37,7 @@ typedef struct		s_info
 }					t_info;
 
 char		*get_var_env(char *varenv);
-int			voir_touche(t_data *data);
+t_data		*voir_touche(t_data *data);
 t_data		*ft_init_display(char **argv, t_info *info, t_data *data);
 t_data		*ft_init(char *arg, t_data *prev, t_data *first, t_info *info);
 t_data		*ft_init_first(char *arg, t_info *info);

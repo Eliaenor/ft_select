@@ -32,7 +32,15 @@ int main(int argc, char **argv)
 	tcsetattr(0, TCSADRAIN, &term);// On applique les changements
 	tputs(tgetstr("cl", NULL), 0, ft_outc); //clear term
 	display_list(first);
-	voir_touche(first);
+	if ((data = voir_touche(first)) != NULL)
+	{
+		while (argc >= 3)
+		{
+			tputs(tgetstr("sr", NULL), 1, ft_outc);
+			argc--;
+		}
+		display_list_select(data);
+	}
 	return (0);
 }
 
@@ -57,7 +65,7 @@ int		ft_outc(int c)
 	return (0);
 }
 
-int		voir_touche(t_data *data)
+t_data		*voir_touche(t_data *data)
 {
 	char	buffer[3];
 	int		len;
@@ -94,9 +102,7 @@ int		voir_touche(t_data *data)
 			{
 				data = data->next;
 			}
-			ft_putstr("\n");
-			display_list_select(data);
-			return (1);
+			return (data);
 		}
 		else if (buffer[0] == 4)
 			tputs(tgetstr("cl", NULL), 0, ft_outc);
@@ -107,5 +113,5 @@ int		voir_touche(t_data *data)
 			ft_putnbr(buffer[2]);
 		}
 	}
-	return (0);
+	return (NULL);
 }
