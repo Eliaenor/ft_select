@@ -14,7 +14,6 @@
 # define FT_MINISHELL_H
 
 #include "./libft/includes/libft.h"
-#include "termcap.h"
 #include <curses.h>
 #include <term.h>
 
@@ -34,9 +33,12 @@ int			display_list(t_data *data);
 int			ft_outc(int c);
 t_data		*ft_right_arrow(t_data *data);
 t_data		*ft_left_arrow(t_data *data);
+t_data		*ft_down_arrow(t_data *data);
+t_data		*ft_up_arrow(t_data *data);
 t_data		*ft_space(t_data *data);
 t_data		*to_the_last(t_data *data);
-t_data		*ft_delete(t_data *data);
+t_data		*ft_delete(t_data *data, t_data *next);
 void		ft_free(t_data *data);
+int			display_list_select(t_data *data);
 
 #endif

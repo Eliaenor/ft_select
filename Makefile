@@ -22,7 +22,7 @@ all: $(NAME)
 
 $(NAME):
 	@cd libft; make re
-	gcc -g -ltermcap -o $(NAME) $(FLAG) $(SRC_C) $(LIB_A)
+	gcc -ltermcap -o $(NAME) $(FLAG) $(SRC_C) $(LIB_A)
 
 clean:
 	@cd libft; make clean

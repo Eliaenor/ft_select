@@ -38,22 +38,34 @@ t_data		*ft_init_data(int f, char *arg, t_data *previous, t_data *first)
 	return(newdata);
 }
 
-t_data		*ft_right_arrow(t_data *data)
+t_data		*ft_up_arrow(t_data *data)
+{
+	if (data->first == 1)
+	{
+		while (data->prev->first != 1)
+		{
+			tputs(tgetstr("do", NULL), 0, ft_outc);
+			data = data->prev;
+		}
+		data = data->prev;
+	}
+	else
+	{
+		tputs(tgetstr("up", NULL), 0, ft_outc);
+
+	}	data = data->prev;
+	return (data);
+}
+
+t_data		*ft_down_arrow(t_data *data)
 {
 	char	*res;
-	int		len;
 
-	len = 0;
 	if (data->next->first == 1)
 		res = tgetstr("ho", NULL);
 	else
-		res = tgetstr("nd", NULL);
-	len = ft_strlen(data->arg);
-	while (len + 1 != 0)
-	{
-		tputs(res, 0, ft_outc);
-		len--;
-	}
+		res = tgetstr("do", NULL);
+	tputs(res, 0, ft_outc);
 	data = data->next;
 	return (data);
 }
@@ -80,19 +92,8 @@ t_data		*ft_left_arrow(t_data *data)
 
 t_data		*to_the_last(t_data *data)
 {
-	int		len;
-
-	len = 0;
 	while (data->next->first != 1)
-	{
-		len += ft_strlen(data->arg) + 1;
-		data = data->next;
-	}
-	while (len != 0)
-	{
-		tputs(tgetstr("nd", NULL), 0, ft_outc);
-		len--;
-	}
+		tputs(tgetstr("do", NULL), 0, ft_outc);
 	return (data);
 }
 
@@ -115,20 +116,17 @@ t_data		*ft_space(t_data *data)
 	if (data->next->first == 1)
 		tputs(tgetstr("ho", NULL), 0, ft_outc);
 	else
-		tputs(tgetstr("nd", NULL), 0, ft_outc);
+		tputs(tgetstr("do", NULL), 0, ft_outc);
 	data = data->next;
 	return (data);
 }
 
-t_data		*ft_delete(t_data *data)
+t_data		*ft_delete(t_data *data, t_data *next)
 {
-	t_data	*next;
-
 	if (data->first == 1)
 		data->next->first = 1;
 	data->prev->next = data->next;
 	data->next->prev = data->prev;
-	next = data->next;
 	ft_free(data);
 	return (next);
 }
@@ -136,7 +134,5 @@ t_data		*ft_delete(t_data *data)
 void		ft_free(t_data *data)
 {
 	free(data->arg);
-	free(data->next);
-	free(data->prev);
 	free(data);
 }
