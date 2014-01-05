@@ -16,19 +16,12 @@ int main(int argc, char **argv)
 {
 	char				*term_name;
 	struct termios		term;
-	int					i;
 	t_data				*data;
 	t_data				*first;
+	t_info				info;
 
-	(void)argc;
-	i = 1;
-	while (argv[i])
-	{
-		data = ft_init_data(i, argv[i], data, first);
-		if (i == 1)
-			first = data;
-		i++;
-	}
+	info.nbr_of_elem = argc - 1;
+	first = ft_init_display(argv, &info, data);
 	term_name = get_var_env("TERM=");
 	tgetent(NULL, term_name);
 	tcgetattr(0, &term);
@@ -40,53 +33,6 @@ int main(int argc, char **argv)
 	tputs(tgetstr("cl", NULL), 0, ft_outc); //clear term
 	display_list(first);
 	voir_touche(first);
-	return (0);
-}
-
-int			display_list(t_data *data)
-{
-	tputs(tgetstr("dl", NULL), 1, ft_outc);
-	tputs(tgetstr("ho", NULL), 0, ft_outc); // cursor to home
-
-	while (data->next->first != 1)
-	{
-		if (data->select == 1)
-			tputs(tgetstr("mr", NULL), 0, ft_outc); // inverse video output
-		else
-			tputs(tgetstr("me", NULL), 0, ft_outc); // reset video output
-		ft_putstr(data->arg);
-		tputs(tgetstr("me", NULL), 0, ft_outc); // reset video output
-		ft_putstr("\n");
-		data = data->next;
-	}
-	if (data->select == 1)
-		tputs(tgetstr("mr", NULL), 0, ft_outc); // inverse video output
-	else
-		tputs(tgetstr("me", NULL), 0, ft_outc); // reset video output
-	ft_putstr(data->arg);
-	tputs(tgetstr("ho", NULL), 0, ft_outc);
-	return (0);
-}
-
-int			display_list_select(t_data *data)
-{
-	while (data->next->first != 1)
-	{
-		if (data->select == 1)
-		{
-			tputs(tgetstr("me", NULL), 0, ft_outc); // reset video output
-			ft_putstr(data->arg);
-			ft_putstr(" ");
-		}
-		data = data->next;
-	}
-	if (data->select == 1)
-		{
-			tputs(tgetstr("me", NULL), 0, ft_outc); // reset video output
-			ft_putstr(data->arg);
-		}
-		data = data->next;
-	ft_putstr("\n");
 	return (0);
 }
 

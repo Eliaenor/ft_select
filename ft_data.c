@@ -12,32 +12,6 @@
 
 #include "ft_select.h"
 
-t_data		*ft_init_data(int f, char *arg, t_data *previous, t_data *first)
-{
-	t_data	*newdata;
-
-	newdata = (t_data*)malloc(sizeof(t_data));
-	newdata->next = (t_data*)malloc(sizeof(t_data*));
-	newdata->prev = (t_data*)malloc(sizeof(t_data*));
-	newdata->arg = ft_strdup(arg);
-	newdata->select = 0;
-	if (f == 1)
-	{
-		newdata->first = 1;
-		newdata->next = newdata;
-		newdata->prev = newdata;
-	}
-	else
-	{
-		newdata->first = 0;
-		newdata->next = first;
-		previous->next = newdata;
-		first->prev = newdata;
-		newdata->prev = previous;
-	}
-	return(newdata);
-}
-
 t_data		*ft_up_arrow(t_data *data)
 {
 	if (data->first == 1)
@@ -105,14 +79,15 @@ t_data		*ft_space(t_data *data)
 	if (data->select == 0)
 	{
 		tputs(tgetstr("mr", NULL), 0, ft_outc); // inverse video output
+		ft_putnstr(data->arg, data->len);
 		data->select = 1;
 	}
 	else
 	{
 		tputs(tgetstr("me", NULL), 0, ft_outc); // reset video output
 		data->select = 0;
+		ft_putstr(data->arg);
 	}
-	ft_putstr(data->arg);
 	if (data->next->first == 1)
 		tputs(tgetstr("ho", NULL), 0, ft_outc);
 	else

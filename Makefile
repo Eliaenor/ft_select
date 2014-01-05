@@ -12,7 +12,7 @@
 
 NAME = ft_select
 
-SRC_C = main.c ft_data.c
+SRC_C = main.c ft_data.c ft_lib.c ft_display.c ft_init.c
 
 LIB_A = libft.a
 
