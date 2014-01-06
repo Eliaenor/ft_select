@@ -23,24 +23,32 @@ int main(int argc, char **argv)
 	info.nbr_of_elem = argc - 1;
 	first = ft_init_display(argv, &info, data);
 	term_name = get_var_env("TERM=");
+	if (term_name == NULL)
+		return(0);
 	tgetent(NULL, term_name);
 	tcgetattr(0, &term);
+	tputs(tgetstr("ti", NULL), 0, ft_outc);
 	term.c_lflag &= ~(ICANON); // Met le terminal en mode canonique.
 	term.c_lflag &= ~(ECHO); // les touches tapées ne s'inscriront plus dans le terminal
 	term.c_cc[VMIN] = 1;
 	term.c_cc[VTIME] = 0;
-	tcsetattr(0, TCSADRAIN, &term);// On applique les changements
+	tcsetattr(0, TCSADRAIN, &term); // On applique les changements
 	tputs(tgetstr("cl", NULL), 0, ft_outc); //clear term
+	tputs(tgetstr("vi", NULL), 0, ft_outc); // make invisible cursor
 	display_list(first);
 	if ((data = voir_touche(first)) != NULL)
 	{
-		while (argc >= 3)
-		{
-			tputs(tgetstr("sr", NULL), 1, ft_outc);
-			argc--;
-		}
+		tputs(tgetstr("ho", NULL), 0, ft_outc);
+		tputs(tgetstr("te", NULL), 0, ft_outc);
 		display_list_select(data);
 	}
+	else
+	{
+		tputs(tgetstr("ho", NULL), 0, ft_outc);
+		tputs(tgetstr("te", NULL), 0, ft_outc);
+		write(1, "\n", 1);
+	}
+	tputs(tgetstr("ve", NULL), 0, ft_outc);
 	return (0);
 }
 
@@ -53,6 +61,8 @@ char		*get_var_env(char *varenv)
 
 	i = 0;
 	len = ft_strlen(varenv);
+	if (!environ[i])
+		return (NULL);
 	while (environ[i] && ft_strncmp(environ[i], varenv, len) != 0)
 		i++;
 	str = environ[i];
@@ -61,7 +71,7 @@ char		*get_var_env(char *varenv)
 
 int		ft_outc(int c)
 {
-	ft_putchar(c);
+	write(isatty(1), &c, 1);
 	return (0);
 }
 
@@ -87,9 +97,10 @@ t_data		*voir_touche(t_data *data)
 		}
 		else if (buffer[0] == 32) // if touche Espace
 			data = ft_space(data);
-		else if (buffer[0] == 127)
+		else if (buffer[0] == 127 || buffer[0] == 126)
 		{
-			data = ft_delete(data, data->next);
+			if ((data = ft_delete(data, data->next)) == NULL)
+				return (NULL);
 			while (data->first != 1)
 			{
 				data = data->next;
@@ -104,14 +115,12 @@ t_data		*voir_touche(t_data *data)
 			}
 			return (data);
 		}
-		else if (buffer[0] == 4)
-			tputs(tgetstr("cl", NULL), 0, ft_outc);
-		else
+		/*else
 		{
 			ft_putnbr(buffer[0]);
 			ft_putnbr(buffer[1]);
 			ft_putnbr(buffer[2]);
-		}
+		}*/
 	}
 	return (NULL);
 }

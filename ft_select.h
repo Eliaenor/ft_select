@@ -53,6 +53,8 @@ t_data		*ft_delete(t_data *data, t_data *next);
 void		ft_free(t_data *data);
 int			display_list_select(t_data *data);
 char		*ft_dupandfill(char *src, int len);
-void		ft_putnstr(char *str, int n);
+void		ft_putnstr(char *str, int n, int select);
+void		ft_putnstr_out(char *str, int n);
+void		ft_underline(t_data *data);
 
 #endif

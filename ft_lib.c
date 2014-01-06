@@ -33,8 +33,22 @@ char	*ft_dupandfill(char *src, int len)
 	return (dest);
 }
 
+void	ft_putnstr(char *str, int n, int select)
+{
+	int		i;
 
-void	ft_putnstr(char *str, int n)
+	i = 0;
+	if (select == 1)
+		tputs(tgetstr("mr", NULL), 0, ft_outc); // inverse video output
+	while (i <= n)
+	{
+		write(isatty(1), &str[i], 1);
+		i++;
+	}
+	tputs(tgetstr("me", NULL), 0, ft_outc); // reset video output
+}
+
+void	ft_putnstr_out(char *str, int n)
 {
 	int		i;
 
