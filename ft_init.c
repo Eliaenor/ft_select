@@ -16,10 +16,11 @@ t_data		*ft_init(char *arg, t_data *prev, t_data *first, t_info *info)
 {
 	t_data	*newdata;
 
+	(void)info;
 	newdata = (t_data*)malloc(sizeof(t_data));
 	newdata->next = (t_data*)malloc(sizeof(t_data*));
 	newdata->prev = (t_data*)malloc(sizeof(t_data*));
-	newdata->arg = ft_dupandfill(arg, info->lenmax);
+	newdata->arg = ft_strdup(arg);
 	newdata->len = ft_strlen(arg) - 1;
 	newdata->select = 0;
 	newdata->first = 0;
@@ -34,10 +35,11 @@ t_data		*ft_init_first(char *arg, t_info *info)
 {
 	t_data	*newdata;
 
+	(void)info;
 	newdata = (t_data*)malloc(sizeof(t_data));
 	newdata->next = (t_data*)malloc(sizeof(t_data*));
 	newdata->prev = (t_data*)malloc(sizeof(t_data*));
-	newdata->arg = ft_dupandfill(arg, info->lenmax);
+	newdata->arg = ft_strdup(arg);
 	newdata->len = ft_strlen(arg) - 1;
 	newdata->select = 0;
 	newdata->first = 1;

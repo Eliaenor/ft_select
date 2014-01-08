@@ -12,27 +12,6 @@
 
 #include "ft_select.h"
 
-char	*ft_dupandfill(char *src, int len)
-{
-	char	*dest;
-	int		i;
-
-	i = 0;
-	dest = (char*)malloc(sizeof(char) * (len + 1));
-	while (src[i] != '\0')
-	{
-		dest[i] = src[i];
-		i++;
-	}
-	while (i <= len)
-	{
-		dest[i] = ' ';
-		i++;
-	}
-	dest[i] = '\0';
-	return (dest);
-}
-
 void	ft_putnstr(char *str, int n, int select)
 {
 	int		i;

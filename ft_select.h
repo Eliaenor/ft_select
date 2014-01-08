@@ -37,11 +37,11 @@ typedef struct		s_info
 }					t_info;
 
 char		*get_var_env(char *varenv);
-t_data		*voir_touche(t_data *data);
+t_data		*voir_touche(t_data *data, t_info *info);
 t_data		*ft_init_display(char **argv, t_info *info, t_data *data);
 t_data		*ft_init(char *arg, t_data *prev, t_data *first, t_info *info);
 t_data		*ft_init_first(char *arg, t_info *info);
-int			display_list(t_data *data);
+int			display_list(t_data *data, t_info *info);
 int			ft_outc(int c);
 t_data		*ft_right_arrow(t_data *data);
 t_data		*ft_left_arrow(t_data *data);
@@ -50,11 +50,11 @@ t_data		*ft_up_arrow(t_data *data);
 t_data		*ft_space(t_data *data);
 t_data		*to_the_last(t_data *data);
 t_data		*ft_delete(t_data *data, t_data *next);
-void		ft_free(t_data *data);
+void		ft_tostart(void);
 int			display_list_select(t_data *data);
-char		*ft_dupandfill(char *src, int len);
 void		ft_putnstr(char *str, int n, int select);
 void		ft_putnstr_out(char *str, int n);
 void		ft_underline(t_data *data);
+int			ft_putarg(t_data *data, int num, int lenmax);
 
 #endif
