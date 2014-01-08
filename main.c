@@ -25,17 +25,16 @@ int			main(int argc, char **argv)
 	term_name = get_var_env("TERM=");
 	if (term_name == NULL)
 		return(0);
+	//signal(SIGWINCH, sig_screen);
 	tgetent(NULL, term_name);
 	tcgetattr(0, &term);
-	tputs(tgetstr("ti", NULL), 0, ft_outc); // Saving Term config
-	term.c_lflag &= ~(ICANON); // Met le terminal en mode canonique.
-	term.c_lflag &= ~(ECHO); // les touches tapées ne s'inscriront plus dans le terminal
+	tputs(tgetstr("ti", NULL), 0, ft_outc);
+	term.c_lflag &= ~(ICANON);
+	term.c_lflag &= ~(ECHO);
 	term.c_cc[VMIN] = 1;
 	term.c_cc[VTIME] = 0;
-	tcsetattr(0, TCSADRAIN, &term); // On applique les changements
-	tputs(tgetstr("cl", NULL), 0, ft_outc); //clear term
-	//tputs(tgetstr("vi", NULL), 0, ft_outc); // make invisible cursor
-	display_list(first, &info);
+	tcsetattr(0, TCSADRAIN, &term);
+	tputs(tgetstr("vi", NULL), 0, ft_outc);
 	if ((data = voir_touche(first, &info)) != NULL)
 	{
 		tputs(tgetstr("ho", NULL), 0, ft_outc);
@@ -78,27 +77,26 @@ int		ft_outc(int c)
 t_data		*voir_touche(t_data *data, t_info *info)
 {
 	char	buffer[3];
-	int		len;
 
 	while (1)
 	{
-		len = 0;
 		ft_bzero(buffer, 3);
+		display_list(data, info);
 		read(0, buffer, 3);
 		if (buffer[0] == 27)
 		{
 			if (buffer[1] == 0)
 				return (NULL);
-			if (buffer[2] == 65) // if fleche up
+			if (buffer[2] == 65)
 				data = ft_up_arrow(data);
-			else if (buffer[2] == 66) // if touche fleche down
+			else if (buffer[2] == 66)
 				data = ft_down_arrow(data);
-			/*else if (buffer[2] == 67) // if touche fleche droite
-				data = ft_right_arrow(data);
-			else if (buffer[2] == 68) // if touche fleche gauche
-				data = ft_left_arrow(data);*/
+			else if (buffer[2] == 67)
+				data = ft_right_arrow(data, info);
+			else if (buffer[2] == 68)
+				data = ft_left_arrow(data, info);
 		}
-		else if (buffer[0] == 32) // if touche Espace
+		else if (buffer[0] == 32)
 			data = ft_space(data);
 		else if (buffer[0] == 127 || buffer[0] == 126)
 		{
@@ -106,7 +104,7 @@ t_data		*voir_touche(t_data *data, t_info *info)
 				return (NULL);
 			while (data->first != 1)
 				data = data->next;
-			display_list(data, info);
+			data->cursor = 1;
 		}
 		else if (buffer[0] == 10)
 		{

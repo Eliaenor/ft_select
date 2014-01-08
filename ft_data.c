@@ -14,70 +14,55 @@
 
 t_data		*ft_up_arrow(t_data *data)
 {
-	ft_tostart();
-	ft_putnstr(data->arg, data->len, data->select);
-	if (data->first == 1)
-	{
-		while (data->prev->first != 1)
-		{
-			tputs(tgetstr("do", NULL), 0, ft_outc);
-			data = data->prev;
-		}
-		data = data->prev;
-	}
-	else
-		tputs(tgetstr("up", NULL), 0, ft_outc);
+	data->cursor = 0;
 	data = data->prev;
-	ft_tostart();
-	ft_underline(data);
+	data->cursor = 1;
 	return (data);
 }
 
 t_data		*ft_down_arrow(t_data *data)
 {
-	char	*res;
-
-	ft_tostart();
-	ft_putnstr(data->arg, data->len, data->select);
-	if (data->next->first == 1)
-		res = tgetstr("ho", NULL);
-	else
-		res = tgetstr("do", NULL);
-	tputs(res, 0, ft_outc);
+	data->cursor = 0;
 	data = data->next;
-	ft_underline(data);
+	data->cursor = 1;
 	return (data);
 }
 
-t_data		*to_the_last(t_data *data)
+t_data		*ft_right_arrow(t_data *data, t_info *info)
 {
-	while (data->next->first != 1)
-		tputs(tgetstr("do", NULL), 0, ft_outc);
+	int		tmp;
+
+	tmp = info->nbr_of_lines;
+	data->cursor = 0;
+	while (tmp-- && data->next->first != 1)
+		data = data->next;
+	if (data->next->first == 1 && tmp != -1)
+		data = data->next;
+	data->cursor = 1;
+	return (data);
+}
+
+t_data		*ft_left_arrow(t_data *data, t_info *info)
+{
+	int		tmp;
+
+	tmp = info->nbr_of_lines;
+	data->cursor = 0;
+	while (tmp-- && data->first != 1)
+		data = data->prev;
+	if (data->first == 1 && tmp != -1)
+		data = data->prev;
+	data->cursor = 1;
 	return (data);
 }
 
 t_data		*ft_space(t_data *data)
 {
-	int		len;
-
-	len = 0;
 	if (data->select == 0)
-	{
-		tputs(tgetstr("mr", NULL), 0, ft_outc); // inverse video output
-		ft_tostart();
-		ft_putstr_fd(data->arg, isatty(1));
 		data->select = 1;
-		tputs(tgetstr("me", NULL), 0, ft_outc);
-	}
 	else
-	{
-		tputs(tgetstr("me", NULL), 0, ft_outc); // reset video output
-		ft_tostart();
-		ft_putstr_fd(data->arg, isatty(1));
 		data->select = 0;
-	}
 	data = ft_down_arrow(data);
-	ft_underline(data);
 	return (data);
 }
 
@@ -100,21 +85,3 @@ t_data		*ft_delete(t_data *data, t_data *next)
 		return (next);
 	}
 }
-
-void		ft_underline(t_data *data)
-{
-	tputs(tgetstr("us", NULL), 0, ft_outc);
-	if (data->select == 1)
-		tputs(tgetstr("mr", NULL), 0, ft_outc);
-	ft_putstr_fd(data->arg, isatty(1));
-	tputs(tgetstr("ue", NULL), 0, ft_outc);
-	tputs(tgetstr("me", NULL), 0, ft_outc);
-	ft_tostart();
-}
-
-void		ft_tostart(void)
-{
-	tputs(tgetstr("do", NULL), 0, ft_outc);
-	tputs(tgetstr("up", NULL), 0, ft_outc);
-}
-

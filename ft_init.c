@@ -23,6 +23,7 @@ t_data		*ft_init(char *arg, t_data *prev, t_data *first, t_info *info)
 	newdata->arg = ft_strdup(arg);
 	newdata->len = ft_strlen(arg) - 1;
 	newdata->select = 0;
+	newdata->cursor = 0;
 	newdata->first = 0;
 	newdata->next = first;
 	prev->next = newdata;
@@ -42,6 +43,7 @@ t_data		*ft_init_first(char *arg, t_info *info)
 	newdata->arg = ft_strdup(arg);
 	newdata->len = ft_strlen(arg) - 1;
 	newdata->select = 0;
+	newdata->cursor = 1;
 	newdata->first = 1;
 	newdata->next = newdata;
 	newdata->prev = newdata;
