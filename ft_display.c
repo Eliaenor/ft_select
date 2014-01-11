@@ -14,34 +14,19 @@
 
 int			display_list(t_data *data, t_info *info)
 {
-	int		i;
-	char	*term_name;
-	int		tmp;
+	int		nbr_columns;
 
-	i = 0;
-	term_name = get_var_env("TERM=");
-	if (term_name == NULL)
-		return(0);
-	tgetent(NULL, term_name);
-	info->nbr_of_lines = tgetnum("li");
-	tmp = 0;
-	while (tmp != info->nbr_of_lines)
+	if (ft_get_size(info) == 1)
+		return (0);
+	data = ft_reset_display(data, info);
+	nbr_columns = (info->nbr_of_elem / info->nbr_of_lines) + 1;
+	if ((2 + info->lenmax) * nbr_columns > info->nbr_of_columns)
 	{
-		tputs(tgetstr("dl", NULL), 1, ft_outc);
-		tmp++;
+		ft_putstr_fd("Terminal too small to display the full list", isatty(1));
+		tputs(tgetstr("ho", NULL), 0, ft_outc);
+		return (1);
 	}
-	while (data->first != 1)
-		data = data->next;
-	tputs(tgetstr("dl", NULL), 1, ft_outc);
-	tputs(tgetstr("ho", NULL), 0, ft_outc); // cursor to home
-	while (data->next->first != 1)
-	{
-		ft_putarg(data, i, info);
-		i++;
-		data = data->next;
-	}
-	if (data->next->first == 1)
-		ft_putarg(data, i, info);
+	data = ft_display_arg(data, info);
 	tputs(tgetstr("ho", NULL), 0, ft_outc);
 	data = data->next;
 	return (0);
@@ -81,6 +66,16 @@ int			ft_putarg(t_data *data, int num, t_info *info)
 		tputs(tgetstr("nd", NULL), 0, ft_outc);
 		tmp--;
 	}
+	ft_cursor_select(data);
+	if ((num + 1) % line == 0)
+		tputs(tgetstr("ho", NULL), 0, ft_outc);
+	else
+		tputs(tgetstr("do", NULL), 0, ft_outc);
+	return (0);
+}
+
+int			ft_cursor_select(t_data *data)
+{
 	if (data->cursor == 1)
 		tputs(tgetstr("us", NULL), 0, ft_outc);
 	if (data->select == 1)
@@ -93,10 +88,5 @@ int			ft_putarg(t_data *data, int num, t_info *info)
 		ft_putstr_fd(data->arg, isatty(1));
 	tputs(tgetstr("ue", NULL), 0, ft_outc);
 	tputs(tgetstr("me", NULL), 0, ft_outc); // reset video output
-	if ((num + 1) % line == 0)
-		tputs(tgetstr("ho", NULL), 0, ft_outc);
-	else
-		tputs(tgetstr("do", NULL), 0, ft_outc);
 	return (0);
 }
-

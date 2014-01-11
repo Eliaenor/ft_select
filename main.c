@@ -14,40 +14,29 @@
 
 int			main(int argc, char **argv)
 {
-	char				*term_name;
-	struct termios		term;
 	t_data				*data;
 	t_data				*first;
 	t_info				info;
 
 	info.nbr_of_elem = argc - 1;
 	first = ft_init_display(argv, &info, data);
-	term_name = get_var_env("TERM=");
-	if (term_name == NULL)
-		return(0);
-	//signal(SIGWINCH, sig_screen);
-	tgetent(NULL, term_name);
-	tcgetattr(0, &term);
-	tputs(tgetstr("ti", NULL), 0, ft_outc);
-	term.c_lflag &= ~(ICANON);
-	term.c_lflag &= ~(ECHO);
-	term.c_cc[VMIN] = 1;
-	term.c_cc[VTIME] = 0;
-	tcsetattr(0, TCSADRAIN, &term);
-	tputs(tgetstr("vi", NULL), 0, ft_outc);
+	ft_init_global(first, &info);
+	signal(28, sig_screen);
+	//signal(18, sig_ctrl_z);
+	signal(2, sig_ctrl_c);
+	signal(3, sig_ctrl_c);
+	if (init_term() == 1)
+		return (0);
 	if ((data = voir_touche(first, &info)) != NULL)
 	{
-		tputs(tgetstr("ho", NULL), 0, ft_outc);
-		tputs(tgetstr("te", NULL), 0, ft_outc);
+		ft_reset();
 		display_list_select(data);
 	}
 	else
 	{
-		tputs(tgetstr("ho", NULL), 0, ft_outc);
-		tputs(tgetstr("te", NULL), 0, ft_outc);
+		ft_reset();
 		write(1, "\n", 1);
 	}
-	tputs(tgetstr("ve", NULL), 0, ft_outc);
 	return (0);
 }
 
@@ -68,10 +57,17 @@ char		*get_var_env(char *varenv)
 	return (str + len);
 }
 
-int		ft_outc(int c)
+int			ft_outc(int c)
 {
 	write(isatty(1), &c, 1);
 	return (0);
+}
+
+void		ft_reset()
+{
+	tputs(tgetstr("ho", NULL), 0, ft_outc);
+	tputs(tgetstr("te", NULL), 0, ft_outc);
+	tputs(tgetstr("ve", NULL), 0, ft_outc);
 }
 
 t_data		*voir_touche(t_data *data, t_info *info)
@@ -85,27 +81,11 @@ t_data		*voir_touche(t_data *data, t_info *info)
 		read(0, buffer, 3);
 		if (buffer[0] == 27)
 		{
-			if (buffer[1] == 0)
+			if ((data = ft_escapechar(data, info, buffer)) == NULL)
 				return (NULL);
-			if (buffer[2] == 65)
-				data = ft_up_arrow(data);
-			else if (buffer[2] == 66)
-				data = ft_down_arrow(data);
-			else if (buffer[2] == 67)
-				data = ft_right_arrow(data, info);
-			else if (buffer[2] == 68)
-				data = ft_left_arrow(data, info);
 		}
-		else if (buffer[0] == 32)
-			data = ft_space(data);
-		else if (buffer[0] == 127 || buffer[0] == 126)
-		{
-			if ((data = ft_delete(data, data->next)) == NULL)
-				return (NULL);
-			while (data->first != 1)
-				data = data->next;
-			data->cursor = 1;
-		}
+		else if (buffer[0] == 32 || buffer[0] == 127 || buffer[0] == 126)
+			data = ft_delorspace(data, buffer);
 		else if (buffer[0] == 10)
 		{
 			while (data->first != 1)

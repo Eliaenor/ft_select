@@ -21,7 +21,6 @@ t_data		*ft_init(char *arg, t_data *prev, t_data *first, t_info *info)
 	newdata->next = (t_data*)malloc(sizeof(t_data*));
 	newdata->prev = (t_data*)malloc(sizeof(t_data*));
 	newdata->arg = ft_strdup(arg);
-	newdata->len = ft_strlen(arg) - 1;
 	newdata->select = 0;
 	newdata->cursor = 0;
 	newdata->first = 0;
@@ -41,7 +40,6 @@ t_data		*ft_init_first(char *arg, t_info *info)
 	newdata->next = (t_data*)malloc(sizeof(t_data*));
 	newdata->prev = (t_data*)malloc(sizeof(t_data*));
 	newdata->arg = ft_strdup(arg);
-	newdata->len = ft_strlen(arg) - 1;
 	newdata->select = 0;
 	newdata->cursor = 1;
 	newdata->first = 1;
@@ -64,8 +62,8 @@ t_data		*ft_init_display(char **argv, t_info *info, t_data *data)
 		info->lenmax = (tmp > info->lenmax ? tmp : info->lenmax);
 		i++;
 	}
-	i = 1;
-	while (argv[i])
+	i = 0;
+	while (argv[++i])
 	{
 		if (i == 1)
 		{
@@ -74,8 +72,26 @@ t_data		*ft_init_display(char **argv, t_info *info, t_data *data)
 		}
 		else
 			data = ft_init(argv[i], data, first, info);
-		i++;
 	}
 	return (first);
 }
 
+int			init_term(void)
+{
+	char				*term_name;
+	struct termios		term;
+
+	term_name = get_var_env("TERM=");
+	if (term_name == NULL)
+		return (1);
+	tgetent(NULL, term_name);
+	tcgetattr(0, &term);
+	tputs(tgetstr("ti", NULL), 0, ft_outc);
+	term.c_lflag &= ~(ICANON);
+	term.c_lflag &= ~(ECHO);
+	term.c_cc[VMIN] = 1;
+	term.c_cc[VTIME] = 0;
+	tcsetattr(0, TCSADRAIN, &term);
+	tputs(tgetstr("vi", NULL), 0, ft_outc);
+	return (0);
+}
