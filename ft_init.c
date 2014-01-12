@@ -28,7 +28,7 @@ t_data		*ft_init(char *arg, t_data *prev, t_data *first, t_info *info)
 	prev->next = newdata;
 	first->prev = newdata;
 	newdata->prev = prev;
-	return(newdata);
+	return (newdata);
 }
 
 t_data		*ft_init_first(char *arg, t_info *info)
@@ -45,7 +45,7 @@ t_data		*ft_init_first(char *arg, t_info *info)
 	newdata->first = 1;
 	newdata->next = newdata;
 	newdata->prev = newdata;
-	return(newdata);
+	return (newdata);
 }
 
 t_data		*ft_init_display(char **argv, t_info *info, t_data *data)
@@ -89,9 +89,30 @@ int			init_term(void)
 	tputs(tgetstr("ti", NULL), 0, ft_outc);
 	term.c_lflag &= ~(ICANON);
 	term.c_lflag &= ~(ECHO);
+	term.c_lflag |= (ISIG);
 	term.c_cc[VMIN] = 1;
 	term.c_cc[VTIME] = 0;
 	tcsetattr(0, TCSADRAIN, &term);
 	tputs(tgetstr("vi", NULL), 0, ft_outc);
 	return (0);
 }
+
+int			reset_term(struct termios *term)
+{
+	char				*term_name;
+
+	term_name = get_var_env("TERM=");
+	if (term_name == NULL)
+		return (1);
+	tgetent(NULL, term_name);
+	tcgetattr(0, term);
+	tputs(tgetstr("te", NULL), 0, ft_outc);
+	term->c_lflag |= (ICANON);
+	term->c_lflag |= (ECHO);
+	term->c_cc[VMIN] = 1;
+	term->c_cc[VTIME] = 0;
+	tcsetattr(0, TCSADRAIN, term);
+	tputs(tgetstr("ve", NULL), 0, ft_outc);
+	return (0);
+}
+

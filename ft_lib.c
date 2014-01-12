@@ -81,7 +81,7 @@ int			ft_get_size(t_info *info)
 
 	term_name = get_var_env("TERM=");
 	if (term_name == NULL)
-		return(1);
+		return (1);
 	tgetent(NULL, term_name);
 	info->nbr_of_lines = tgetnum("li");
 	info->nbr_of_columns = tgetnum("co");

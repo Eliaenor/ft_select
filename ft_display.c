@@ -80,13 +80,13 @@ int			ft_cursor_select(t_data *data)
 		tputs(tgetstr("us", NULL), 0, ft_outc);
 	if (data->select == 1)
 	{
-		tputs(tgetstr("mr", NULL), 0, ft_outc); // inverse video output
+		tputs(tgetstr("mr", NULL), 0, ft_outc);
 		ft_putstr_fd(data->arg, isatty(1));
-		tputs(tgetstr("me", NULL), 0, ft_outc); // reset video output
+		tputs(tgetstr("me", NULL), 0, ft_outc);
 	}
 	else
 		ft_putstr_fd(data->arg, isatty(1));
 	tputs(tgetstr("ue", NULL), 0, ft_outc);
-	tputs(tgetstr("me", NULL), 0, ft_outc); // reset video output
+	tputs(tgetstr("me", NULL), 0, ft_outc);
 	return (0);
 }

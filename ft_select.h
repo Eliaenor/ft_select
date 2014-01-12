@@ -13,10 +13,10 @@
 #ifndef FT_MINISHELL_H
 # define FT_MINISHELL_H
 
-#include "./libft/includes/libft.h"
-#include <curses.h>
-#include <term.h>
-#include <signal.h>
+# include "./libft/includes/libft.h"
+# include <curses.h>
+# include <term.h>
+# include <signal.h>
 
 typedef struct		s_data
 {
@@ -39,6 +39,7 @@ typedef struct		s_info
 
 char		*get_var_env(char *varenv);
 int			init_term(void);
+int			reset_term(struct termios *term);
 int			ft_get_size(t_info *info);
 int			ft_cursor_select(t_data *data);
 int			display_list(t_data *data, t_info *info);
@@ -48,7 +49,7 @@ int			ft_putarg(t_data *data, int num, t_info *info);
 int			ft_init_global(t_data *data, t_info *info);
 void		ft_putnstr(char *str, int n, int select);
 void		ft_putnstr_out(char *str, int n);
-void		ft_reset();
+void		ft_reset(void);
 void		sig_ctrl_c(int n);
 void		sig_ctrl_z(int n);
 void		sig_screen(int n);
